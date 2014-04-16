@@ -7,6 +7,8 @@ With jquery-observe you have something like `.on` but for Plugin calls. This is 
   "version": "0.2.2" }
 ```
 
+A vanilla JavaScript version can be found at: [rkusa/selector-observer](https://github.com/rkusa/selector-observer)
+
 ## API
 
     .observe(selector, onAdded, onRemoved)
