@@ -1,12 +1,18 @@
-!function($) {
+!function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else {
+    factory(root.Zepto || root.jQuery);
+  }
+}(this, function($) {
   var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
   var Observer = function(target, selector, onAdded, onRemoved) {
     var self    = this
     this.target = target
-    
+
     var childsOnly = selector[0] === '>'
       , search = childsOnly ? selector.substr(1) : selector
-      
+
     function apply(nodes, callback) {
       Array.prototype.slice.call(nodes).forEach(function(node) {
         if (childsOnly && self.target[0] !== $(node).parent()[0]) return
@@ -17,37 +23,37 @@
         })
       })
     }
-    
+
     this.observer = new MutationObserver(function(mutations) {
       self.disconnect()
-      
+
       mutations.forEach(function(mutation) {
         if (onAdded)   apply(mutation.addedNodes,   onAdded)
         if (onRemoved) apply(mutation.removedNodes, onRemoved)
       })
-  
+
       self.observe()
     })
-    
+
     // call onAdded for existing elements
     $(selector, target).each(function() {
       onAdded.call(this)
     })
-    
+
     this.observe()
   }
-  
+
   Observer.prototype.disconnect = function() {
     this.observer.disconnect()
   }
-  
+
   Observer.prototype.observe = function() {
     var self = this
     this.target.forEach(function(target) {
       self.observer.observe(target, { childList: true, subtree: true })
     })
   }
-  
+
   $.fn.observe = function(selector, onAdded, onRemoved) {
     if (!this.length) return
     var contracts = this.data('contracts')
@@ -64,4 +70,4 @@
     this.data('contracts', contracts)
     return this
   }
-}(window.Zepto || window.jQuery)
+});
